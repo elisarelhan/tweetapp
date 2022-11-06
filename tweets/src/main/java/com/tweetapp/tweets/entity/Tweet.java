@@ -1,19 +1,27 @@
 package com.tweetapp.tweets.entity;
 
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
+
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+//import javax.validation.constraints.Size;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -45,23 +53,21 @@ public class Tweet {
 	@Getter
 	@Setter
 	private int likes;
-	@Column
-	@Getter
-	@Setter
-	@CreationTimestamp
+//	@Temporal(TemporalType.TIMESTAMP)
+//	@Column(name = "created_at", updatable = false)
+//	@CreatedDate
+//	@Getter
+//	@Setter
+//	private Date createdAt;
+//
+//	@Temporal(TemporalType.TIMESTAMP)
+//	@Column(name = "updated_at")
+//	@LastModifiedDate
+//	@Getter
+//	@Setter
+//	private Date updatedAt;
 	
-	private Date dateTime;
-	@OneToMany(mappedBy="tweet")
-	@Getter
-	private List<Reply> replies=new ArrayList<>();
+
 	
-	public void addReply(Reply reply)
-	{
-		this.replies.add(reply);
-	}
-	public void removeReply(Reply reply)
-	{
-		this.replies.remove(reply);
-	}
 
 }

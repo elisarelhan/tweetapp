@@ -4,17 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tweetapp.tweets.entity.Tweet;
+import com.tweetapp.tweets.repository.TweetRepo;
 import com.tweetapp.tweets.service.TweetService;
 
 
@@ -23,54 +30,40 @@ import com.tweetapp.tweets.service.TweetService;
 public class TweetController {
 	 @Autowired 
 	 private TweetService tweetService;
+	 @Autowired 
+	 private TweetRepo postRepository;
 	 
-	 @PostMapping("/postTweet")
-	 public ResponseEntity<?> postTweet(@RequestBody Tweet tweet)
-	 {
-		 Tweet tweetObj =tweetService.saveTweet(tweet);
-		 return ResponseEntity.ok(tweetObj);
-	 }
-	  
 	 @GetMapping("/getAllTweets")
-	 public ResponseEntity<?> getAllTweets()
-	 {
-		 List<Tweet> tweets=new ArrayList<>();
-		tweets=tweetService.getAllTweets();
-		 return ResponseEntity.ok(tweets);
-		 
-	 }
-	 @GetMapping("/getAllTweetsByUser/{userEmail}")
-	 public ResponseEntity<?> getAllTweetsByUser(@PathVariable String userEmail)
-	 {
-		 List<Tweet> tweetsByUser=new ArrayList<>();
-		tweetsByUser=tweetService.getTweetsByUser(userEmail);
-		 return ResponseEntity.ok(tweetsByUser);
-	 }
-	 
-	 @PatchMapping("/updateTweet/{tweetId}")
-	 public ResponseEntity<?> updateTweet(@PathVariable int tweetId, @RequestBody String tweetContent) 
-	 {
-		   Tweet tweet= tweetService.updateTweet(tweetId, tweetContent);
-		   return ResponseEntity.ok(tweet);
-	 
-	 
-	 }
-	 
-	 @PatchMapping("/updateTweetLikes/{tweetId}")
-	 public ResponseEntity<?> updateLikes(@PathVariable int tweetId, @RequestBody int likes) 
-	 {
-		   Tweet tweet= tweetService.updateTweetLikes(tweetId, likes);
-		   return ResponseEntity.ok(tweet);
-	 
-	 
-	 }
-	 
-	 @DeleteMapping("/deleteTweet/{tweetId}")
-	 public void deleteTweet(@PathVariable int tweetId)
-	 {
-		 tweetService.deleteTweet(tweetId);
-		
-	 }
-	 
+	    public Page<Tweet> getAllPosts(@RequestHeader(name = "Authorization", required = true) String token,Pageable pageable) {
+	        return tweetService.getAllTweets(pageable);
+	    }
 
-}
+	 @GetMapping("/getAllTweets/{userEmail}")
+	    public List<Tweet> getAllTweetsByUser(@RequestHeader(name = "Authorization", required = true) String token,@PathVariable String userEmail) {
+	        return tweetService.getTweetsByUser(userEmail);
+	    }
+	    @PostMapping("/postTweet")
+	    public Tweet createPost(@RequestHeader(name = "Authorization", required = true) String token, @RequestBody Tweet tweet) {
+	        return tweetService.saveTweet(tweet);
+	    }
+
+	    @PutMapping("/updateTweet/{tweetId}")
+	    public Tweet updateTweet(@RequestHeader(name = "Authorization", required = true) String token,@PathVariable int tweetId,  @RequestBody Tweet tweetRequest) {
+	        return tweetService.updateTweet(tweetId, tweetRequest.getTweetContent());
+	    }
+
+	    @PutMapping("/updateTweetLikes/{tweetId}")
+	    public Tweet updateTweetLikes(@RequestHeader(name = "Authorization", required = true) String token,@PathVariable int tweetId,  @RequestBody Tweet tweetRequest) {
+	        return tweetService.updateTweetLikes(tweetId, tweetRequest.getLikes());
+	    }
+
+
+	    @DeleteMapping("/deleteTweet/{tweetId}")
+	    public ResponseEntity<?> deletePost(@RequestHeader(name = "Authorization", required = true) String token,@PathVariable int tweetId) {
+	        tweetService.deleteTweet(tweetId);
+	        return new ResponseEntity("Deleted",HttpStatus.OK);
+	    }
+
+	}
+
+

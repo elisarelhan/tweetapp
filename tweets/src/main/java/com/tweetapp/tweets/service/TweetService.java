@@ -1,8 +1,11 @@
 package com.tweetapp.tweets.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -21,9 +24,9 @@ public class TweetService {
 		return tweetRepo.save(tweet);
 	}
 	
-	public List<Tweet> getAllTweets()
+	public Page<Tweet> getAllTweets(Pageable pageable)
 	{
-		return tweetRepo.findAll();
+		return tweetRepo.findAll(pageable);
 	}
 	
 	public List<Tweet> getTweetsByUser(String email)
@@ -37,6 +40,7 @@ public class TweetService {
 		
 	    tweet.setTweetContent(tweetContent);
 	    return tweetRepo.save(tweet);
+		
 	}
 	public Tweet updateTweetLikes(int tweetId,int likes)
 	{
