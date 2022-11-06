@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tweetapp.tweets.entity.Tweet;
@@ -27,6 +28,7 @@ import com.tweetapp.tweets.service.TweetService;
 
 
 @RestController
+//@RequestMapping("/tweet-service")
 public class TweetController {
 	 @Autowired 
 	 private TweetService tweetService;

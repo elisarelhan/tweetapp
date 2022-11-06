@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tweetapp.auth.service.UserService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.extern.slf4j.Slf4j;
 @RestController
 @CrossOrigin
 @Slf4j
+@SecurityRequirement(name = "auth-service")
 public class UserController {
 	
 	@Autowired
