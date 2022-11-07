@@ -3,15 +3,12 @@ package com.tweetapp.auth;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.annotation.Bean;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
-
-
 
 @SpringBootApplication
 @EnableFeignClients
@@ -22,5 +19,12 @@ public class AuthApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AuthApplication.class, args);
 	}
-	
+
+//	@Bean
+//	CommandLineRunner commandLineRunner(KafkaTemplate<String,User> kafkaTemplate) {
+//		return args->{
+//			kafkaTemplate.send("authorization",data);
+//		};
+//	}
+
 }
