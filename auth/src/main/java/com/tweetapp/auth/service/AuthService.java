@@ -3,6 +3,7 @@ package com.tweetapp.auth.service;
 import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +26,10 @@ public class AuthService implements UserDetailsService {
 	@Autowired
 	private PasswordEncoder bcryptEncoder;
 
+	private static final String USER_CREATED_TOPIC = "usercreated";
+	@Autowired
+	private KafkaTemplate<String, User> kafkaTemplate;
+
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepo.findByEmail(email);
@@ -39,7 +44,10 @@ public class AuthService implements UserDetailsService {
 	public User save(User user) {
 		if (userRepo.findByEmail(user.getEmail()) == null) {
 			user.setPassword(bcryptEncoder.encode(user.getPassword()));
-			return userRepo.save(user);
+			User userCreated = userRepo.save(user);
+
+			kafkaTemplate.send(USER_CREATED_TOPIC, userCreated);
+			return userCreated;
 		} else {
 			throw new UsernamePresentException("Email already registered");
 		}
