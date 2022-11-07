@@ -7,22 +7,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.tweetapp.auth.entity.User;
+import com.tweetapp.auth.exception.UserNotFoundException;
 import com.tweetapp.auth.repository.UserRepo;
+
 @Service
 public class UserService {
-	
+
 	@Autowired
 	private UserRepo userRepo;
 
 	public List<User> findAllUsers() {
-		List<User> users=new ArrayList<>();
-		users=userRepo.findAll();
-		return users;
+		List<User> users = new ArrayList<>();
+		users = userRepo.findAll();
+
+		if (users.isEmpty()) {
+			throw new UserNotFoundException("No User Found");
+		} else {
+			return users;
+		}
 	}
+
 	public List<User> findAllUsersByUsername(String username) {
-		List<User> usersByUsername=new ArrayList<>();
-		usersByUsername= userRepo.findByUserName(username);
-		return usersByUsername;
+		List<User> usersByUsername = new ArrayList<>();
+		usersByUsername = userRepo.findByUserName(username);
+		if (usersByUsername.isEmpty()) {
+			throw new UserNotFoundException("User Not Found");
+		} else {
+			return usersByUsername;
+		}
 	}
-	
+
 }

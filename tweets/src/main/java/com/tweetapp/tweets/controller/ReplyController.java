@@ -1,12 +1,6 @@
 package com.tweetapp.tweets.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,44 +12,43 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tweetapp.tweets.entity.Reply;
-import com.tweetapp.tweets.entity.Tweet;
-import com.tweetapp.tweets.service.ReplyService;
-import com.tweetapp.tweets.service.TweetService;
+import com.tweetapp.tweets.exception.ResourceNotFoundException;
 import com.tweetapp.tweets.repository.ReplyRepo;
-import com.tweetapp.tweets.repository.TweetRepo;
+import com.tweetapp.tweets.service.ReplyService;
 
 @RestController
 public class ReplyController {
-	 @Autowired 
-	 private ReplyService replyService;
-	 
-	 @Autowired
-	 private  ReplyRepo replyRepo;
-	 
-	 @GetMapping("/{tweetId}/replies")
-     public List<Reply> getAllCommentsByPostId(@RequestHeader(name = "Authorization", required = true) String token,@PathVariable (value = "tweetId") int tweetId) {
-         return replyService.getAllRepliesByTweetId(tweetId);
-     }
+	@Autowired
+	private ReplyService replyService;
 
-     @PostMapping("/{tweetId}/postReply")
-     public Reply createComment(@RequestHeader(name = "Authorization", required = true) String token,@PathVariable (value = "tweetId") int  tweetId,
-                                   @RequestBody Reply reply) {
-    	 
-    	 return replyService.saveReply(tweetId,reply);
-//         return replyRepo.findById(tweetId).map(tweet -> {
-//             reply.setTweet(tweet);
-//             return commentRepository.save(comment);
-//         }).orElseThrow(() -> new ResourceNotFoundException("PostId " + postId + " not found"));
-     }
+	@Autowired
+	private ReplyRepo replyRepo;
 
-     @DeleteMapping("deleteReply/{replyId}")
-     public ResponseEntity<?> deleteReply(@RequestHeader(name = "Authorization", required = true) String token,@PathVariable int  replyId) {
-    	 replyService.deleteReply(replyId);
-         return new ResponseEntity("Deleted",HttpStatus.OK);
-     }
- 
-	 
-	 
+	@GetMapping("/{tweetId}/replies")
+	public ResponseEntity<?> getAllCommentsByPostId(
+			@RequestHeader(name = "Authorization", required = true) String token,
+			@PathVariable(value = "tweetId") int tweetId) {
 
+		try {
+			return ResponseEntity.ok(replyService.getAllRepliesByTweetId(tweetId));
+		} catch (ResourceNotFoundException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@PostMapping("/{tweetId}/postReply")
+	public Reply createComment(@RequestHeader(name = "Authorization", required = true) String token,
+			@PathVariable(value = "tweetId") int tweetId, @RequestBody Reply reply) {
+
+		return replyService.saveReply(tweetId, reply);
+
+	}
+
+	@DeleteMapping("deleteReply/{replyId}")
+	public ResponseEntity<?> deleteReply(@RequestHeader(name = "Authorization", required = true) String token,
+			@PathVariable int replyId) {
+		replyService.deleteReply(replyId);
+		return new ResponseEntity("Deleted", HttpStatus.OK);
+	}
 
 }

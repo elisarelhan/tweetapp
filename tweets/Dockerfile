@@ -1,6 +1,5 @@
+
 FROM openjdk:11
-VOLUME /tmp
-EXPOSE 8000
-ADD target/*.jar app.jar
-ENV JAVA_OPTS=""
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]]
+ADD target/tweets-0.0.1-SNAPSHOT.jar tweets-0.0.1-SNAPSHOT.jar
+EXPOSE 8001
+ENTRYPOINT ["java", "-jar", "tweets-0.0.1-SNAPSHOT.jar"]
