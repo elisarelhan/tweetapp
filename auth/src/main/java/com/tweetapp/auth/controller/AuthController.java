@@ -1,8 +1,5 @@
 package com.tweetapp.auth.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,12 +8,18 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.tweetapp.auth.config.JwtTokenUtil;
 import com.tweetapp.auth.entity.JwtRequest;
 import com.tweetapp.auth.entity.JwtResponse;
 import com.tweetapp.auth.entity.User;
+import com.tweetapp.auth.exception.UserNotFoundException;
+import com.tweetapp.auth.exception.UsernamePresentException;
 import com.tweetapp.auth.service.AuthService;
 import com.tweetapp.auth.service.UserService;
 
@@ -42,34 +45,43 @@ public class AuthController {
 
 	@PostMapping(value = "/login")
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
+		try {
+			authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
 
-		authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+			final UserDetails userDetails = authService.loadUserByUsername(authenticationRequest.getEmail());
 
-		final UserDetails userDetails = authService.loadUserByUsername(authenticationRequest.getEmail());
+			final String token = jwtTokenUtil.generateToken(userDetails);
+			final long expiresIn = JwtTokenUtil.JWT_VALIDITY;
 
-		final String token = jwtTokenUtil.generateToken(userDetails);
-		final long expiresIn=JwtTokenUtil.JWT_VALIDITY;
+			return ResponseEntity.ok(new JwtResponse(token, expiresIn));
+		} catch (Exception e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+		}
 
-		return ResponseEntity.ok(new JwtResponse(token,expiresIn));
 	}
 
 	@PostMapping(value = "/register")
-	public ResponseEntity<?> saveUser(@RequestBody User user) throws Exception {
-		return ResponseEntity.ok(authService.save(user));
-	}
-	@PatchMapping(value="/forgotPassword")
-	public ResponseEntity<?> saveUser(@RequestBody JwtRequest request) throws Exception {
-		return new ResponseEntity<>(authService.forgotPassword(request.getEmail(),request.getPassword()), HttpStatus.CREATED);
+	public ResponseEntity<?> saveUser(@RequestBody User user) {
+
+		try {
+			return ResponseEntity.ok(authService.save(user));
+		} catch (UsernamePresentException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 	}
 
-//	@GetMapping(value="/getAllUsers")
-//	public ResponseEntity<?> getAllUsers(@RequestHeader(name = "Authorization", required = true) String token )throws Exception
-//	{
-//		
-//		return ResponseEntity.ok(userService.findAllUsers());
-//		
-//	}
-//	
+	@PatchMapping(value = "/forgotPassword")
+	public ResponseEntity<?> saveUser(@RequestBody JwtRequest request) {
+
+		try {
+			return ResponseEntity.ok(authService.forgotPassword(request.getEmail(), request.getPassword()));
+		} catch (UserNotFoundException e) {
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+
+	}
+
 	private void authenticate(String username, String password) throws Exception {
 		try {
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -79,6 +91,5 @@ public class AuthController {
 			throw new Exception("INVALID_CREDENTIALS", e);
 		}
 	}
-	
-	
+
 }
