@@ -16,6 +16,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
@@ -45,22 +48,30 @@ public class Reply {
 	@Setter
 	private int replyId;
 	@Column
+	@Email(message="Please enter a valid email address")
+	@NotBlank(message="Email is mandatory")
 	@Getter
 	@Setter
 	private String userEmail;
-	@Column
+	@Column(length=144)
+	@Size(max=144, message="Not more than 144 characters")
 	@Getter
 	@Setter
 	private String replyContent;
-//	  @Temporal(TemporalType.TIMESTAMP)
-//	    @Column(name = "created_at", nullable = false, updatable = false)
-//	    @CreatedDate
-//	    private Date createdAt;
-//
-//	    @Temporal(TemporalType.TIMESTAMP)
-//	    @Column(name = "updated_at", nullable = false)
-//	    @LastModifiedDate
-//	    private Date updatedAt;
+	 
+	@CreationTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column
+	@Getter
+	@Setter
+	private Date creationDate;
+
+	@UpdateTimestamp
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column
+	@Getter
+	@Setter
+	private Date updatedDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tweet_id", nullable = false)

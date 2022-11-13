@@ -31,7 +31,7 @@ public class TweetService {
 	public List<Tweet> getTweetsByUser(String email) {
 
 		if (tweetRepo.findByUserEmail(email).isEmpty())
-			throw new ResourceNotFoundException("Email Not Found");
+			throw new ResourceNotFoundException("Tweets Not Found");
 		else
 			return tweetRepo.findByUserEmail(email);
 	}
