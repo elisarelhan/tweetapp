@@ -36,5 +36,11 @@ public class UserService {
 			return usersByUsername;
 		}
 	}
+	public User findUserByEmail(String email)
+	{
+		User userDetails=userRepo.findByEmail(email);
+		return userDetails;
+		
+	}
 
 }

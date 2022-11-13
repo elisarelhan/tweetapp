@@ -1,5 +1,7 @@
 package com.tweetapp.auth.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +46,7 @@ public class AuthController {
 	private UserService userService;
 
 	@PostMapping(value = "/login")
-	public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
+	public ResponseEntity<?> createAuthenticationToken(@Valid @RequestBody JwtRequest authenticationRequest) throws Exception {
 		try {
 			authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
 
@@ -53,7 +55,7 @@ public class AuthController {
 			final String token = jwtTokenUtil.generateToken(userDetails);
 			final long expiresIn = JwtTokenUtil.JWT_VALIDITY;
 
-			return ResponseEntity.ok(new JwtResponse(token, expiresIn));
+			return ResponseEntity.ok(new JwtResponse(token, expiresIn,userDetails.getUsername()));
 		} catch (Exception e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -61,7 +63,7 @@ public class AuthController {
 	}
 
 	@PostMapping(value = "/register")
-	public ResponseEntity<?> saveUser(@RequestBody User user) {
+	public ResponseEntity<?> saveUser(@Valid @RequestBody User user)throws Exception {
 
 		try {
 			return ResponseEntity.ok(authService.save(user));
@@ -72,7 +74,7 @@ public class AuthController {
 	}
 
 	@PatchMapping(value = "/forgotPassword")
-	public ResponseEntity<?> saveUser(@RequestBody JwtRequest request) {
+	public ResponseEntity<?> saveUser(@Valid @RequestBody JwtRequest request) {
 
 		try {
 			return ResponseEntity.ok(authService.forgotPassword(request.getEmail(), request.getPassword()));

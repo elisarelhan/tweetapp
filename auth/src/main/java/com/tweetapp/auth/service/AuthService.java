@@ -46,7 +46,7 @@ public class AuthService implements UserDetailsService {
 			user.setPassword(bcryptEncoder.encode(user.getPassword()));
 			User userCreated = userRepo.save(user);
 
-			kafkaTemplate.send(USER_CREATED_TOPIC, userCreated);
+//			kafkaTemplate.send(USER_CREATED_TOPIC, userCreated);
 			return userCreated;
 		} else {
 			throw new UsernamePresentException("Email already registered");
@@ -60,7 +60,7 @@ public class AuthService implements UserDetailsService {
 			user.setPassword(bcryptEncoder.encode(user.getPassword()));
 			return userRepo.save(user);
 		} else {
-			throw new UserNotFoundException("User Not Found");
+			throw new UserNotFoundException("Email not registered");
 		}
 
 	}

@@ -14,5 +14,7 @@ public interface UserRepo extends JpaRepository<User, Integer> {
     
     @Query(value="SELECT * FROM users WHERE email LIKE %?%;",nativeQuery=true)
     List<User> findByUserName(String username);
+    
+    
    
 }
