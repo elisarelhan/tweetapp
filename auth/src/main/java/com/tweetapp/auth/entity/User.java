@@ -1,12 +1,14 @@
 package com.tweetapp.auth.entity;
 
 import java.sql.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -18,6 +20,7 @@ import javax.validation.constraints.Size;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -69,9 +72,10 @@ public class User {
 	private String email;
 	@Column
 	@NotBlank(message="Password is mandatory")
-	@Pattern(regexp ="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message="Password should containe minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character")
+	//@Pattern(regexp ="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$", message="Password should contain minimum 8 characters, at least one uppercase letter, one lowercase letter, one number and one special character")
 	@Getter
 	@Setter
 	private String password;
+	
 
 }

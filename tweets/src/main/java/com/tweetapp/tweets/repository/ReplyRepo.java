@@ -16,7 +16,7 @@ import com.tweetapp.tweets.entity.Tweet;
 public interface ReplyRepo  extends JpaRepository<Reply, Integer> {
 	
 	@Query(value="SELECT * FROM reply_details where tweet_id=?;",nativeQuery=true)
-	List<Reply> findByTweetId(int tweetId);
+	List<Reply> findByTweetIdOrderByCreationDateDesc(int tweetId);
 //    Optional<Reply> findByIdAndPostId(Long id, Long postId);
 
 	

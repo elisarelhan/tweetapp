@@ -56,7 +56,7 @@ public class ReplyController {
 	public ResponseEntity<?> deleteReply(@RequestHeader(name = "Authorization", required = true) String token,
 			@Valid @PathVariable int replyId) {
 		replyService.deleteReply(replyId);
-		return new ResponseEntity("Deleted", HttpStatus.OK);
+		return new ResponseEntity(1, HttpStatus.OK);
 	}
 
 }

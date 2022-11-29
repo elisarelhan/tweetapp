@@ -49,7 +49,7 @@ public class Tweet {
 	private int tweetId;
 	@Column
 	@Email(message="Please enter a valid email address")
-	@NotBlank(message="Email is mandatory")
+//	@NotBlank(message="Email is mandatory")
 	@Getter
 	@Setter
 	private String userEmail;

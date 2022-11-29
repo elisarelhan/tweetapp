@@ -53,6 +53,16 @@ public class TweetController {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
 	}
+	@GetMapping("/getTweet/{tweetId}")
+	public ResponseEntity<?> getTweet(@RequestHeader(name = "Authorization", required = true) String token,
+			@Valid @PathVariable int tweetId) {
+		try {
+			return ResponseEntity.ok(tweetService.getTweet(tweetId));
+		} catch (ResourceNotFoundException e) {
+			log.warn(e.getMessage());
+			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
+		}
+	}
 
 	@PostMapping("/postTweet")
 	public Tweet createPost(@RequestHeader(name = "Authorization", required = true) String token,
@@ -76,7 +86,7 @@ public class TweetController {
 	public ResponseEntity<?> deletePost(@RequestHeader(name = "Authorization", required = true) String token,
 			@Valid @PathVariable int tweetId) {
 		tweetService.deleteTweet(tweetId);
-		return new ResponseEntity("Deleted", HttpStatus.OK);
+		return new ResponseEntity(1,HttpStatus.OK);
 	}
 
 }

@@ -18,27 +18,34 @@ public class TweetService {
 	public Tweet saveTweet(Tweet tweet) {
 		return tweetRepo.save(tweet);
 	}
+	public Tweet getTweet(int tweetId) {
+		if( tweetRepo.findByTweetIdOrderByUpdatedDateDesc(tweetId)==null) {
+			throw new ResourceNotFoundException("Tweet Not Found");
+		} else {
+			return tweetRepo.findByTweetIdOrderByUpdatedDateDesc(tweetId);
+		}
+	}
 
 	public List<Tweet> getAllTweets() {
 
-		if (tweetRepo.findAll().isEmpty()) {
-			throw new ResourceNotFoundException("Resource Not Found");
+		if (tweetRepo.findAllTweetsOrderByUpdatedDateDesc().isEmpty()) {
+			throw new ResourceNotFoundException("No Tweets Found");
 		} else {
-			return tweetRepo.findAll();
+			return tweetRepo.findAllTweetsOrderByUpdatedDateDesc();
 		}
 	}
 
 	public List<Tweet> getTweetsByUser(String email) {
 
-		if (tweetRepo.findByUserEmail(email).isEmpty())
-			throw new ResourceNotFoundException("Tweets Not Found");
+		if (tweetRepo.findByUserEmailOrderByUpdatedDateDesc(email).isEmpty())
+			throw new ResourceNotFoundException("No Tweets Found");
 		else
-			return tweetRepo.findByUserEmail(email);
+			return tweetRepo.findByUserEmailOrderByUpdatedDateDesc(email);
 	}
 
 	public Tweet updateTweet(int tweetId, String tweetContent) {
 
-		Tweet tweet = tweetRepo.findByTweetId(tweetId);
+		Tweet tweet = tweetRepo.findByTweetIdOrderByUpdatedDateDesc(tweetId);
 
 		tweet.setTweetContent(tweetContent);
 		return tweetRepo.save(tweet);
@@ -46,7 +53,7 @@ public class TweetService {
 	}
 
 	public Tweet updateTweetLikes(int tweetId, int likes) {
-		Tweet tweet = tweetRepo.findByTweetId(tweetId);
+		Tweet tweet = tweetRepo.findByTweetIdOrderByUpdatedDateDesc(tweetId);
 		tweet.setLikes(likes);
 		return tweetRepo.save(tweet);
 	}
