@@ -51,7 +51,7 @@ public class AuthService implements UserDetailsService {
 			user.setPassword(bcryptEncoder.encode(user.getPassword()));
 			User userCreated = userRepo.save(user);
 
-			kafkaTemplate.send(USER_CREATED_TOPIC, userCreated);
+			template.send(USER_CREATED_TOPIC,"User registered");
 
 
 			return userCreated;
