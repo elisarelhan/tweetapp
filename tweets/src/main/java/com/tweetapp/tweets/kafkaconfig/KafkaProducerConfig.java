@@ -1,4 +1,4 @@
-package com.tweetapp.auth.kafkaconfig;
+package com.tweetapp.tweets.kafkaconfig;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +14,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import com.tweetapp.auth.entity.User;
+import com.tweetapp.tweets.entity.Reply;
+import com.tweetapp.tweets.entity.Tweet;
 
 @Configuration
 public class KafkaProducerConfig {
@@ -45,7 +46,7 @@ public class KafkaProducerConfig {
 	}
 
 	@Bean
-	public ProducerFactory<String, User> userProducerFactory() {
+	public ProducerFactory<String, Tweet> tweetProducerFactory() {
 		Map<String, Object> configProps = new HashMap<>();
 		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -54,12 +55,12 @@ public class KafkaProducerConfig {
 	}
 
 	@Bean
-	public KafkaTemplate<String, User> userKafkaTemplate() {
-		return new KafkaTemplate<>(userProducerFactory());
+	public KafkaTemplate<String, Tweet> tweetKafkaTemplate() {
+		return new KafkaTemplate<>(tweetProducerFactory());
 	}
 
 	@Bean
-	public ProducerFactory<String, List<User>> userListProducerFactory() {
+	public ProducerFactory<String, List<Tweet>> tweetListProducerFactory() {
 		Map<String, Object> configProps = new HashMap<>();
 		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -68,7 +69,22 @@ public class KafkaProducerConfig {
 	}
 
 	@Bean
-	public KafkaTemplate<String, List<User>> userListKafkaTemplate() {
-		return new KafkaTemplate<>(userListProducerFactory());
+	public KafkaTemplate<String, List<Tweet>> userListKafkaTemplate() {
+		return new KafkaTemplate<>(tweetListProducerFactory());
 	}
+
+	@Bean
+	public ProducerFactory<String, Reply> replyProducerFactory() {
+		Map<String, Object> configProps = new HashMap<>();
+		configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+		configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+		return new DefaultKafkaProducerFactory<>(configProps);
+	}
+
+	@Bean
+	public KafkaTemplate<String, Reply> replyKafkaTemplate() {
+		return new KafkaTemplate<>(replyProducerFactory());
+	}
+
 }

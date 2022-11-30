@@ -26,13 +26,16 @@ public class AuthService implements UserDetailsService {
 	@Autowired
 	private PasswordEncoder bcryptEncoder;
 
-	private static final String USER_CREATED_TOPIC = "usercreated";
+	private static final String USER_CREATED_TOPIC = "user";
 	@Autowired
 	private KafkaTemplate<String, User> kafkaTemplate;
+	@Autowired
+	private KafkaTemplate<String, String> template;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepo.findByEmail(email);
+		kafkaTemplate.send(USER_CREATED_TOPIC, user);
 		if (user != null) {
 			return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
 					new ArrayList<>());
@@ -46,7 +49,10 @@ public class AuthService implements UserDetailsService {
 			user.setPassword(bcryptEncoder.encode(user.getPassword()));
 			User userCreated = userRepo.save(user);
 
+			kafkaTemplate.send(USER_CREATED_TOPIC, userCreated);
+
 //			kafkaTemplate.send(USER_CREATED_TOPIC, userCreated);
+
 			return userCreated;
 		} else {
 			throw new UsernamePresentException("Email already registered");
@@ -58,6 +64,7 @@ public class AuthService implements UserDetailsService {
 
 		if (user != null) {
 			user.setPassword(bcryptEncoder.encode(user.getPassword()));
+			template.send(USER_CREATED_TOPIC, "Password changed");
 			return userRepo.save(user);
 		} else {
 			throw new UserNotFoundException("Email not registered");
