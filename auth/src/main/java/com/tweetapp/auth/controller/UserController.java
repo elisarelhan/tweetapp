@@ -23,6 +23,14 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+//	private KafkaTemplate<String, String> template;
+//	
+//	
+//	    public UserController(KafkaTemplate<String, String> template) {
+//	
+//	        this.template = template;
+//	
+//	    }
 
 	@GetMapping(value = "/getAllUsers")
 	public ResponseEntity<?> getAllUsers(@RequestHeader(name = "Authorization", required = true) String token) {
@@ -38,11 +46,27 @@ public class UserController {
 	public ResponseEntity<?> getAllUsersByUsername(@RequestHeader(name = "Authorization", required = true) String token,
 			@PathVariable String email) throws Exception {
 		try {
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 			return ResponseEntity.ok(userService.findAllUsersByUsername(email));
 		} catch (UserNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
 
 	}
+<<<<<<< Updated upstream
+=======
+
+	@GetMapping(value = "/user/{email}")
+	public ResponseEntity<?> getUserByEmail(@RequestHeader(name = "Authorization", required = true) String token,
+			@Valid @PathVariable String email) {
+//		template.send("user",email);
+
+		return ResponseEntity.ok(userService.findUserByEmail(email));
+
+	}
+>>>>>>> Stashed changes
 
 }
