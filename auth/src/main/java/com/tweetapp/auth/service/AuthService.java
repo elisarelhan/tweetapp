@@ -35,11 +35,13 @@ public class AuthService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userRepo.findByEmail(email);
-		kafkaTemplate.send(USER_CREATED_TOPIC, user);
+		
 		if (user != null) {
+			kafkaTemplate.send(USER_CREATED_TOPIC, user);
 			return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
 					new ArrayList<>());
 		} else {
+			template.send(USER_CREATED_TOPIC,"User not found with username: " + email);
 			throw new UsernameNotFoundException("User not found with username: " + email);
 		}
 	}
@@ -51,10 +53,10 @@ public class AuthService implements UserDetailsService {
 
 			kafkaTemplate.send(USER_CREATED_TOPIC, userCreated);
 
-//			kafkaTemplate.send(USER_CREATED_TOPIC, userCreated);
 
 			return userCreated;
 		} else {
+			template.send(USER_CREATED_TOPIC,"Email already registered");
 			throw new UsernamePresentException("Email already registered");
 		}
 	}
@@ -67,6 +69,7 @@ public class AuthService implements UserDetailsService {
 			template.send(USER_CREATED_TOPIC, "Password changed");
 			return userRepo.save(user);
 		} else {
+			template.send(USER_CREATED_TOPIC, "Email not registered");
 			throw new UserNotFoundException("Email not registered");
 		}
 
