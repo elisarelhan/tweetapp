@@ -29,15 +29,24 @@ public class TweetService {
 		templateString.send(USER_CREATED_TOPIC, "Tweet posted");
 		return tweetObj;
 	}
-<<<<<<< Updated upstream
+
+	public Tweet getTweet(int tweetId) {
+		if( tweetRepo.findByTweetIdOrderByUpdatedDateDesc(tweetId)==null) {
+			throw new ResourceNotFoundException("Tweet Not Found");
+		} else {
+			return tweetRepo.findByTweetIdOrderByUpdatedDateDesc(tweetId);
+		}
+	}
+
 
 	public List<Tweet> getAllTweets() {
 
-		if (tweetRepo.findAll().isEmpty()) {
-			throw new ResourceNotFoundException("Resource Not Found");
+		if (tweetRepo.findAllTweetsOrderByUpdatedDateDesc().isEmpty()) {
+			throw new ResourceNotFoundException("No Tweets Found");
 		} else {
+
 			return tweetRepo.findAll();
-=======
+
 
 	public Tweet getTweet(int tweetId) {
 		if (tweetRepo.findByTweetIdOrderByUpdatedDateDesc(tweetId) == null) {
@@ -60,18 +69,14 @@ public class TweetService {
 			List<Tweet> tweetObj = tweetRepo.findAllTweetsOrderByUpdatedDateDesc();
 			template.send(USER_CREATED_TOPIC, tweetObj);
 			return tweetObj;
->>>>>>> Stashed changes
+
 		}
 	}
 
 	public List<Tweet> getTweetsByUser(String email) {
 
-<<<<<<< Updated upstream
-		if (tweetRepo.findByUserEmail(email).isEmpty())
-			throw new ResourceNotFoundException("Email Not Found");
-		else
-			return tweetRepo.findByUserEmail(email);
-=======
+
+	
 		if (tweetRepo.findByUserEmailOrderByUpdatedDateDesc(email).isEmpty()) {
 			templateString.send(USER_CREATED_TOPIC, "No Tweets Found");
 			throw new ResourceNotFoundException("No Tweets Found");
@@ -81,12 +86,11 @@ public class TweetService {
 			return tweetObj;
 
 		}
->>>>>>> Stashed changes
-	}
+
 
 	public Tweet updateTweet(int tweetId, String tweetContent) {
 
-		Tweet tweet = tweetRepo.findByTweetId(tweetId);
+		Tweet tweet = tweetRepo.findByTweetIdOrderByUpdatedDateDesc(tweetId);
 
 		tweet.setTweetContent(tweetContent);
 		Tweet tweetObj = tweetRepo.save(tweet);
@@ -96,7 +100,7 @@ public class TweetService {
 	}
 
 	public Tweet updateTweetLikes(int tweetId, int likes) {
-		Tweet tweet = tweetRepo.findByTweetId(tweetId);
+		Tweet tweet = tweetRepo.findByTweetIdOrderByUpdatedDateDesc(tweetId);
 		tweet.setLikes(likes);
 
 		Tweet tweetObj = tweetRepo.save(tweet);

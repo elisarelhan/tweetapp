@@ -30,7 +30,7 @@ public class ReplyService {
 	private KafkaTemplate<String, String> templateString;
 
 	public Reply saveReply(int tweetId, Reply reply) {
-		Tweet tweet = tweetRepo.findByTweetId(tweetId);
+		Tweet tweet = tweetRepo.findByTweetIdOrderByUpdatedDateDesc(tweetId);
 		reply.setTweet(tweet);
 		Reply replyObj = replyRepo.save(reply);
 		templateString.send(USER_CREATED_TOPIC, "Reply posted");
@@ -40,10 +40,10 @@ public class ReplyService {
 	}
 
 	public List<Reply> getAllRepliesByTweetId(int tweetId) {
-		if (replyRepo.findByTweetId(tweetId).isEmpty())
+		if (replyRepo.findByTweetIdOrderByCreationDateDesc(tweetId).isEmpty())
 			throw new ResourceNotFoundException("Tweet not found");
 		else
-			return replyRepo.findByTweetId(tweetId);
+			return replyRepo.findByTweetIdOrderByCreationDateDesc(tweetId);
 
 	}
 

@@ -1,5 +1,7 @@
 package com.tweetapp.auth.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,20 +46,17 @@ public class UserController {
 
 	@GetMapping(value = "/userByUsername/{email}")
 	public ResponseEntity<?> getAllUsersByUsername(@RequestHeader(name = "Authorization", required = true) String token,
-			@PathVariable String email) throws Exception {
+			@Valid @PathVariable String email) throws Exception {
 		try {
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 			return ResponseEntity.ok(userService.findAllUsersByUsername(email));
 		} catch (UserNotFoundException e) {
 			return new ResponseEntity(e.getMessage(), HttpStatus.NOT_FOUND);
 		}
 
 	}
-<<<<<<< Updated upstream
-=======
+
+
 
 	@GetMapping(value = "/user/{email}")
 	public ResponseEntity<?> getUserByEmail(@RequestHeader(name = "Authorization", required = true) String token,
@@ -67,6 +66,4 @@ public class UserController {
 		return ResponseEntity.ok(userService.findUserByEmail(email));
 
 	}
->>>>>>> Stashed changes
-
 }

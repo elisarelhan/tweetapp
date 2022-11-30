@@ -44,8 +44,6 @@ public class UserService {
 			return usersByUsername;
 		}
 	}
-<<<<<<< Updated upstream
-=======
 
 	public User findUserByEmail(String email) {
 		User userDetails = userRepo.findByEmail(email);
@@ -53,6 +51,6 @@ public class UserService {
 		return userDetails;
 
 	}
->>>>>>> Stashed changes
+
 
 }
